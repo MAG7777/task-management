@@ -1,10 +1,11 @@
 import React from "react";
-import Input from "./components/Input";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import ToDo from './components/ToDo';
 
 function App() {
   return (
     <div>
-      <Input />
+    <ToDo />
     </div>
   );
 }
