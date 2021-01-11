@@ -1,0 +1,12 @@
+.checkbox {
+  margin: 9px;
+}
+
+.taskcard {
+  margin: 0 auto 20px;
+  width: 18rem;
+}
+
+.checked {
+    border: 1px solid red;
+}
