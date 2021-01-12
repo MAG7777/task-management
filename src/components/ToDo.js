@@ -4,12 +4,14 @@ import idGenerator from "../helpers/idGenerator";
 import NewTask from "./NewTask";
 import Task from "./Task/Task";
 import Confirm from "./Confirm";
+import Modal from "./Modal";
 
 export default class ToDo extends Component {
   state = {
     tasks: [],
     checkedTasks: new Set(),
     showConfirm: false,
+    editTask: null,
   };
 
   handleAddTaskClick = (inputValue) => {
@@ -45,6 +47,12 @@ export default class ToDo extends Component {
     });
   };
 
+  handleEdit = (task) => () => {
+    this.setState({
+      editTask: task,
+    });
+  };
+
   onRemoveSelected = () => {
     const checkedTasks = new Set(this.state.checkedTasks);
     let tasks = [...this.state.tasks];
@@ -58,7 +66,7 @@ export default class ToDo extends Component {
     this.setState({
       tasks,
       checkedTasks,
-      showConfirm: false
+      showConfirm: false,
     });
   };
 
@@ -68,8 +76,23 @@ export default class ToDo extends Component {
     });
   };
 
+  handleSave = (taskId, value) =>{
+      const tasks = [...this.state.tasks];
+      const taskIndex = tasks.findIndex(task => task.id === taskId);
+      tasks[taskIndex] = {
+        ...tasks[taskIndex],
+        text: value
+      };
+
+      this.setState({
+        tasks: tasks,
+        editTask: null
+      })
+
+  }
+
   render() {
-    const { checkedTasks, tasks, showConfirm } = this.state;
+    const { checkedTasks, tasks, showConfirm, editTask } = this.state;
     const showTask = tasks.map((task) => {
       return (
         <Col key={task.id}>
@@ -77,6 +100,7 @@ export default class ToDo extends Component {
             data={task}
             onRemove={this.handleDeleteTask}
             onCheck={this.handleCheck(task.id)}
+            onEdit={this.handleEdit(task)}
           />
         </Col>
       );
@@ -103,6 +127,13 @@ export default class ToDo extends Component {
             count={checkedTasks.size}
             onSubmit={this.onRemoveSelected}
             onCancel={this.toggleConfirm}
+          />
+        )}
+        {!!editTask && (
+          <Modal
+            value={editTask}
+            onSave={this.handleSave}
+            onCancel={this.handleEdit(null)}
           />
         )}
       </Container>

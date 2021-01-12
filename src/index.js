@@ -4,9 +4,10 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  // <React.StrictMode>
+  //Sra patchar0v render 2 angam 1 anwum, bayc ognum e developmenti @ntacqum sxalner@ tesnel
+  <React.StrictMode>
     <App />,
-  // </React.StrictMode>,
+   </React.StrictMode>,
   document.getElementById('root')
 );
 

@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { Card, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import styles from "./task.module.css";
 
 class Task extends PureComponent {
@@ -9,28 +9,39 @@ class Task extends PureComponent {
     checked: false,
   };
 
-  taggleCheckbox = () => {
+  toggleCheckbox = () => {
     this.setState({
       checked: !this.state.checked,
     });
     this.props.onCheck();
   };
 
+  toggleModal = () => {
+    this.setState({
+      showModal: !this.state.showModal,
+    });
+  };
+
   render() {
-    const { data, onRemove } = this.props;
-    const {checked} = this.state;
+    const { data, onRemove, onEdit } = this.props;
+    const { checked } = this.state;
 
     return (
-      <Card className={`card ${styles.taskcard} ${checked ? styles.checked : "" }`}>
+      <Card
+        className={`card ${styles.taskcard} ${checked ? styles.checked : ""}`}
+      >
         <input
           type="checkbox"
           className={styles.checkbox}
-          onClick={this.taggleCheckbox}
+          onClick={this.toggleCheckbox}
         />
         <Card.Body>
           <Card.Title>Card Title</Card.Title>
           <Card.Text>{data.text}</Card.Text>
-          <Button variant="danger" onClick={onRemove(data.id)}>
+          <Button variant="info" onClick={onEdit} className="m-1">
+            <FontAwesomeIcon icon={faEdit} />
+          </Button>
+          <Button variant="danger" onClick={onRemove(data.id)} className="m-1">
             <FontAwesomeIcon icon={faTrash} />
           </Button>
         </Card.Body>
