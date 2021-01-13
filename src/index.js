@@ -1,10 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+// import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  //Sra patchar0v render 2 angam 1 anwum, bayc ognum e developmenti @ntacqum sxalner@ tesnel
   <React.StrictMode>
     <App />,
    </React.StrictMode>,

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Modal, Button, FormControl } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 class TaskModal extends Component {
   constructor(props){
@@ -68,5 +69,13 @@ class TaskModal extends Component {
     );
   }
 }
+
+TaskModal.propTypes = {
+  value: PropTypes.object.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  // number: PropTypes.oneOf([1,2,3, true, 'three']),
+  // number: PropTypes.oneOfTypes([PropTypes.func, PropTypes.number])
+  };
 
 export default TaskModal;
