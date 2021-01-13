@@ -74,8 +74,6 @@ TaskModal.propTypes = {
   value: PropTypes.object.isRequired,
   onSave: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  // number: PropTypes.oneOf([1,2,3, true, 'three']),
-  // number: PropTypes.oneOfTypes([PropTypes.func, PropTypes.number])
   };
 
 export default TaskModal;

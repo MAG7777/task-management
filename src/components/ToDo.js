@@ -76,20 +76,19 @@ export default class ToDo extends Component {
     });
   };
 
-  handleSave = (taskId, value) =>{
-      const tasks = [...this.state.tasks];
-      const taskIndex = tasks.findIndex(task => task.id === taskId);
-      tasks[taskIndex] = {
-        ...tasks[taskIndex],
-        text: value
-      };
+  handleSave = (taskId, value) => {
+    const tasks = [...this.state.tasks];
+    const taskIndex = tasks.findIndex((task) => task.id === taskId);
+    tasks[taskIndex] = {
+      ...tasks[taskIndex],
+      text: value,
+    };
 
-      this.setState({
-        tasks: tasks,
-        editTask: null
-      })
-
-  }
+    this.setState({
+      tasks: tasks,
+      editTask: null,
+    });
+  };
 
   render() {
     const { checkedTasks, tasks, showConfirm, editTask } = this.state;
@@ -101,6 +100,7 @@ export default class ToDo extends Component {
             onRemove={this.handleDeleteTask}
             onCheck={this.handleCheck(task.id)}
             onEdit={this.handleEdit(task)}
+            disabled={!!checkedTasks.size}
           />
         </Col>
       );
@@ -109,14 +109,17 @@ export default class ToDo extends Component {
       <Container fluid>
         <Row>
           <Col md={{ span: 6, offset: 3 }}>
-            <NewTask handleAddTask={this.handleAddTaskClick} />
+            <NewTask
+              handleAddTask={this.handleAddTaskClick}
+              disabled={!!checkedTasks.size}
+            />
           </Col>
         </Row>
         <Row>{showTask}</Row>
         <Row className="justify-content-center">
           <Button
             variant="danger"
-            disabled={checkedTasks.size ? false : true}
+            disabled={!checkedTasks.size}
             onClick={this.toggleConfirm}
           >
             Remove selected

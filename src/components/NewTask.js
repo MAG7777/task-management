@@ -30,6 +30,7 @@ export default class NewTask extends PureComponent {
   };
 
   render() {
+    const { disabled } = this.props;
     return (
       <InputGroup className="my-3">
         <FormControl
@@ -39,9 +40,14 @@ export default class NewTask extends PureComponent {
           placeholder="Input task"
           aria-label="Recipient's username"
           aria-describedby="basic-addon2"
+          disabled={disabled}
         />
         <InputGroup.Append>
-          <Button variant="outline-primary" onClick={this.sendValue}>
+          <Button
+            variant="outline-primary"
+            onClick={this.sendValue}
+            disabled={disabled}
+          >
             Add task
           </Button>
         </InputGroup.Append>
