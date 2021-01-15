@@ -10,6 +10,7 @@ export default class ToDo extends Component {
     tasks: [],
     checkedTasks: new Set(),
     showConfirm: false,
+    showNewTaskModal: false,
     editTask: null,
   };
 
@@ -26,7 +27,7 @@ export default class ToDo extends Component {
           throw tasks.error;
         }
         this.setState({
-          tasks
+          tasks,
         });
       })
       .catch((err) => console.log("err", err));
@@ -50,6 +51,7 @@ export default class ToDo extends Component {
         }
         this.setState({
           tasks: [task, ...this.state.tasks],
+          showNewTaskModal: false,
         });
       })
       .catch((err) => console.log("err", err));
@@ -105,6 +107,12 @@ export default class ToDo extends Component {
     });
   };
 
+  toggleNewTaskModal = () => {
+    this.setState({
+      showNewTaskModal: !this.state.showNewTaskModal,
+    });
+  };
+
   handleSave = (taskId, value) => {
     const tasks = [...this.state.tasks];
     const taskIndex = tasks.findIndex((task) => task._id === taskId);
@@ -120,7 +128,13 @@ export default class ToDo extends Component {
   };
 
   render() {
-    const { checkedTasks, tasks, showConfirm, editTask } = this.state;
+    const {
+      checkedTasks,
+      tasks,
+      showConfirm,
+      editTask,
+      showNewTaskModal,
+    } = this.state;
     const showTask = tasks.map((task) => {
       return (
         <Col key={task._id}>
@@ -138,10 +152,14 @@ export default class ToDo extends Component {
       <Container fluid>
         <Row>
           <Col md={{ span: 6, offset: 3 }}>
-            <NewTask
-              handleAddTask={this.handleAddTaskClick}
-              disabled={!!checkedTasks.size}
-            />
+            <Button
+              className="m-3"
+              variant="primary"
+              disabled={checkedTasks.size}
+              onClick={this.toggleNewTaskModal}
+            >
+              Add new task
+            </Button>
           </Col>
         </Row>
         <Row>{showTask}</Row>
@@ -166,6 +184,12 @@ export default class ToDo extends Component {
             value={editTask}
             onSave={this.handleSave}
             onCancel={this.handleEdit(null)}
+          />
+        )}
+        {showNewTaskModal && (
+          <NewTask
+            onAdd={this.handleAddTaskClick}
+            onCancel={this.toggleNewTaskModal}
           />
         )}
       </Container>
