@@ -36,8 +36,9 @@ class Task extends PureComponent {
           onClick={this.toggleCheckbox}
         />
         <Card.Body>
-          <Card.Title>{data.title}</Card.Title>
-          <Card.Text>{data.description}</Card.Text>
+          <Card.Title>Title: {data.title}</Card.Title>
+          <Card.Text>Description: {data.description}</Card.Text>
+          <Card.Text>Date: {data.date ? data.date.slice(0, 10) : "none"}</Card.Text>
           <Button
             variant="info"
             onClick={onEdit}
@@ -48,7 +49,7 @@ class Task extends PureComponent {
           </Button>
           <Button
             variant="danger"
-            onClick={onRemove(data.id)}
+            onClick={onRemove(data._id)}
             className="m-1"
             disabled={disabled}
           >

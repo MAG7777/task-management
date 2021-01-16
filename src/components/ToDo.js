@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import NewTask from "./NewTask";
+import NewTask from "./NewTask/NewTask";
 import Task from "./Task/Task";
 import Confirm from "./Confirm";
 import Modal from "./Modal";
@@ -33,10 +33,7 @@ export default class ToDo extends Component {
       .catch((err) => console.log("err", err));
   }
 
-  handleAddTaskClick = (inputValue) => {
-    const data = {
-      title: inputValue,
-    };
+  handleAddTaskClick = (data) => {
     fetch("http://localhost:3001/task", {
       method: "POST",
       body: JSON.stringify(data),
@@ -59,10 +56,23 @@ export default class ToDo extends Component {
 
   //optimization handledelatetask
   handleDeleteTask = (taskId) => () => {
-    const newTasks = this.state.tasks.filter((task) => task._id !== taskId);
-    this.setState({
-      tasks: newTasks,
-    });
+    fetch(`http://localhost:3001/task/${taskId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          throw data.error;
+        }
+        const newTasks = this.state.tasks.filter((task) => task._id !== taskId);
+        this.setState({
+          tasks: newTasks,
+        });
+      })
+      .catch((err) => console.log("err", err));
   };
 
   handleCheck = (taskId) => () => {
@@ -86,19 +96,37 @@ export default class ToDo extends Component {
 
   onRemoveSelected = () => {
     const checkedTasks = new Set(this.state.checkedTasks);
-    let tasks = [...this.state.tasks];
 
-    checkedTasks.forEach((taskId) => {
-      tasks = tasks.filter((task) => task._id !== taskId);
-    });
+    fetch(`http://localhost:3001/task/`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        tasks: [...checkedTasks],
+      }),
 
-    checkedTasks.clear();
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          throw data.error;
+        }
+        let tasks = [...this.state.tasks];
 
-    this.setState({
-      tasks,
-      checkedTasks,
-      showConfirm: false,
-    });
+        checkedTasks.forEach((taskId) => {
+          tasks = tasks.filter((task) => task._id !== taskId);
+        });
+
+        checkedTasks.clear();
+
+        this.setState({
+          tasks,
+          checkedTasks,
+          showConfirm: false,
+        });
+      })
+      .catch((err) => console.log("err", err));
   };
 
   toggleConfirm = () => {
@@ -151,7 +179,7 @@ export default class ToDo extends Component {
     return (
       <Container fluid>
         <Row>
-          <Col md={{ span: 6, offset: 3 }}>
+          <Col md={{ span: 6, offset: 3 }} className="text-center">
             <Button
               className="m-3"
               variant="primary"
