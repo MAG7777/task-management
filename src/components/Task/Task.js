@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import styles from "./task.module.css";
@@ -38,23 +38,45 @@ class Task extends PureComponent {
         <Card.Body>
           <Card.Title>Title: {data.title}</Card.Title>
           <Card.Text>Description: {data.description}</Card.Text>
-          <Card.Text>Date: {data.date ? data.date.slice(0, 10) : "none"}</Card.Text>
-          <Button
-            variant="info"
-            onClick={onEdit}
-            className="m-1"
-            disabled={disabled}
+          <Card.Text>
+            Date: {data.date ? data.date.slice(0, 10) : "none"}
+          </Card.Text>
+
+          <OverlayTrigger
+            placement="top"
+            overlay={
+              <Tooltip>
+                <strong>Edit</strong>.
+              </Tooltip>
+            }
           >
-            <FontAwesomeIcon icon={faEdit} />
-          </Button>
-          <Button
-            variant="danger"
-            onClick={onRemove(data._id)}
-            className="m-1"
-            disabled={disabled}
+            <Button
+              variant="info"
+              onClick={onEdit}
+              className="m-1"
+              disabled={disabled}
+            >
+              <FontAwesomeIcon icon={faEdit} />
+            </Button>
+          </OverlayTrigger>
+
+          <OverlayTrigger
+            placement="top"
+            overlay={
+              <Tooltip>
+                <strong>Remove</strong>.
+              </Tooltip>
+            }
           >
-            <FontAwesomeIcon icon={faTrash} />
-          </Button>
+            <Button
+              variant="danger"
+              onClick={onRemove(data._id)}
+              className="m-1"
+              disabled={disabled}
+            >
+              <FontAwesomeIcon icon={faTrash} />
+            </Button>
+          </OverlayTrigger>
         </Card.Body>
       </Card>
     );
