@@ -1,22 +1,27 @@
 import React from "react";
-import { Navbar, Nav, FormControl, Button, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Navbar, Nav } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
+import logo from "../public/images/logo.png";
 
 export default function NavBarMenu() {
   return (
     <Navbar bg="dark" variant="dark">
       <Navbar.Brand>
-        <Link to="/">Home</Link>
+        <NavLink activeClassName="activeMenu" exact to="/">
+          <img src={logo} alt="logo" className="logo" />
+        </NavLink>
       </Navbar.Brand>
       <Nav className="mr-auto">
         <Nav>
-          <Link to="/task">Task</Link>
+          <NavLink activeClassName="activeMenu" exact to="/">
+            Home
+          </NavLink>
+
+          <NavLink activeClassName="activeMenu" exact to="/task">
+            Task
+          </NavLink>
         </Nav>
       </Nav>
-      {/* <Form inline>
-        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-        <Button variant="outline-info">Search</Button>
-      </Form> */}
     </Navbar>
   );
 }
