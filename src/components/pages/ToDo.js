@@ -4,7 +4,9 @@ import NewTask from "../NewTask/NewTask";
 import Task from "../Task/Task";
 import Confirm from "../Confirm";
 import EditTaskModal from "../EditTaskModal";
+import Spinner from "../Spinner/Spinner";
 import { connect } from "react-redux";
+import { getTasks } from "../../store/actions";
 
 class ToDo extends Component {
   state = {
@@ -16,22 +18,23 @@ class ToDo extends Component {
   };
 
   componentDidMount() {
-    fetch("http://localhost:3001/task", {
-      method: "GET",
-      headers: {
-        "Content-TYpe": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((tasks) => {
-        if (tasks.error) {
-          throw tasks.error;
-        }
-        this.setState({
-          tasks,
-        });
-      })
-      .catch((err) => console.log("err", err));
+    this.props.getTasks();
+    // fetch("http://localhost:3001/task", {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-TYpe": "application/json",
+    //   },
+    // })
+    //   .then((response) => response.json())
+    //   .then((tasks) => {
+    //     if (tasks.error) {
+    //       throw tasks.error;
+    //     }
+    //     this.setState({
+    //       tasks,
+    //     });
+    //   })
+    //   .catch((err) => console.log("err", err));
   }
 
   handleAddTaskClick = (data) => {
@@ -172,11 +175,12 @@ class ToDo extends Component {
   render() {
     const {
       checkedTasks,
-      tasks,
       showConfirm,
       editTask,
       showNewTaskModal,
     } = this.state;
+
+    const { tasks, showSpinner } = this.props;
     const showTask = tasks.map((task) => {
       return (
         <Col key={task._id} xs={12} sm={6} md={4} lg={3} xl={2}>
@@ -191,68 +195,78 @@ class ToDo extends Component {
       );
     });
     return (
-      <Container fluid>
-        <Row>
-          <Col md={{ span: 6, offset: 3 }} className="text-center">
-            <Button
-              className="m-3"
-              variant="primary"
-              disabled={checkedTasks.size}
-              onClick={this.toggleNewTaskModal}
-            >
-              Add new task
-            </Button>
-          </Col>
-        </Row>
-        <Row>{showTask}</Row>
-        <Row className="justify-content-center">
-          <Button
-            variant="danger"
-            disabled={!checkedTasks.size}
-            onClick={this.toggleConfirm}
-          >
-            Remove selected
-          </Button>
-        </Row>
-        {showConfirm && (
-          <Confirm
-            count={checkedTasks.size}
-            onSubmit={this.onRemoveSelected}
-            onCancel={this.toggleConfirm}
-          />
+      <>
+        {showSpinner ? (
+          <Spinner />
+        ) : (
+          <Container fluid>
+            <Row>
+              <Col md={{ span: 6, offset: 3 }} className="text-center">
+                <Button
+                  className="m-3"
+                  variant="primary"
+                  disabled={checkedTasks.size}
+                  onClick={this.toggleNewTaskModal}
+                >
+                  Add new task
+                </Button>
+              </Col>
+            </Row>
+            <Row>{showTask}</Row>
+            <Row className="justify-content-center">
+              <Button
+                variant="danger"
+                disabled={!checkedTasks.size}
+                onClick={this.toggleConfirm}
+              >
+                Remove selected
+              </Button>
+            </Row>
+            {showConfirm && (
+              <Confirm
+                count={checkedTasks.size}
+                onSubmit={this.onRemoveSelected}
+                onCancel={this.toggleConfirm}
+              />
+            )}
+            {!!editTask && (
+              <EditTaskModal
+                value={editTask}
+                data={editTask}
+                onSave={this.handleSave}
+                onCancel={this.handleEdit(null)}
+              />
+            )}
+            {showNewTaskModal && (
+              <NewTask
+                onAdd={this.handleAddTaskClick}
+                onCancel={this.toggleNewTaskModal}
+              />
+            )}
+          </Container>
         )}
-        {!!editTask && (
-          <EditTaskModal
-            value={editTask}
-            data={editTask}
-            onSave={this.handleSave}
-            onCancel={this.handleEdit(null)}
-          />
-        )}
-        {showNewTaskModal && (
-          <NewTask
-            onAdd={this.handleAddTaskClick}
-            onCancel={this.toggleNewTaskModal}
-          />
-        )}
-        <button onClick={()=>this.props.changeCount(100)}>Add value</button>
-      </Container>
+      </>
     );
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    number: state.count,
+    tasks: state.tasks,
+    showSpinner: state.loading,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    changeCount: (value) => {
-      dispatch({ type: "ADD_COUNT", value });
-    },
-  };
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     changeCount: (value) => {
+//       dispatch({ type: "ADD_COUNT", value });
+//     },
+//   };
+// };
+
+const mapDispatchToProps = {
+  getTasks: getTasks,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ToDo);
