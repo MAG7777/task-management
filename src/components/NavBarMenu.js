@@ -13,7 +13,7 @@ export default function NavBarMenu() {
       </Navbar.Brand>
       <Nav className="mr-auto">
         <Nav>
-          <NavLink activeClassName="activeMenu" exact to="/">
+          <NavLink activeClassName="activeMenu" exact to="/" style={{textDecoration:"none"}}>
             Home
           </NavLink>
 

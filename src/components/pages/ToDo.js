@@ -4,8 +4,9 @@ import NewTask from "../NewTask/NewTask";
 import Task from "../Task/Task";
 import Confirm from "../Confirm";
 import EditTaskModal from "../EditTaskModal";
+import { connect } from "react-redux";
 
-export default class ToDo extends Component {
+class ToDo extends Component {
   state = {
     tasks: [],
     checkedTasks: new Set(),
@@ -155,7 +156,8 @@ export default class ToDo extends Component {
           throw editedTask.error;
         }
         const tasks = [...this.state.tasks];
-        const foundIndex = tasks.findIndex((task) => task._id === editedTask._id
+        const foundIndex = tasks.findIndex(
+          (task) => task._id === editedTask._id
         );
         tasks[foundIndex] = editedTask;
 
@@ -177,7 +179,7 @@ export default class ToDo extends Component {
     } = this.state;
     const showTask = tasks.map((task) => {
       return (
-        <Col key={task._id} xs={12} sm={6} md={4} lg={3} xl={2} >
+        <Col key={task._id} xs={12} sm={6} md={4} lg={3} xl={2}>
           <Task
             data={task}
             onRemove={this.handleDeleteTask}
@@ -233,7 +235,24 @@ export default class ToDo extends Component {
             onCancel={this.toggleNewTaskModal}
           />
         )}
+        <button onClick={()=>this.props.changeCount(100)}>Add value</button>
       </Container>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    number: state.count,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    changeCount: (value) => {
+      dispatch({ type: "ADD_COUNT", value });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ToDo);
