@@ -54,7 +54,6 @@ export default class SingleTask extends Component {
   };
 
   handleSave = (taskId, data) => {
-    console.log("AAA===>>", taskId, data);
     fetch(`http://localhost:3001/task/${taskId}`, {
       method: "PUT",
       body: JSON.stringify(data),

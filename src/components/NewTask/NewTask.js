@@ -4,8 +4,10 @@ import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "./newTask.module.css";
+import { connect } from "react-redux";
+import {addTask} from "../../store/actions";
 
-export default class NewTask extends PureComponent {
+ class NewTask extends PureComponent {
   state = {
     title: "",
     description: "",
@@ -61,7 +63,7 @@ export default class NewTask extends PureComponent {
       description,
       date: date.toISOString().slice(0, 10),
     };
-    this.props.onAdd(data);
+    this.props.addTask(data);
   };
 
   render() {
@@ -129,6 +131,12 @@ export default class NewTask extends PureComponent {
 }
 
 NewTask.propTypes = {
-  onAdd: PropTypes.func.isRequired,
+  addTask: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };
+
+const mapDispatchToProps = {
+  addTask: addTask
+}
+
+export default connect(null,mapDispatchToProps)(NewTask);

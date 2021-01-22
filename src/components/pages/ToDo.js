@@ -1,16 +1,14 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import NewTask from "../NewTask/NewTask";
 import Task from "../Task/Task";
 import Confirm from "../Confirm";
 import EditTaskModal from "../EditTaskModal";
-import Spinner from "../Spinner/Spinner";
 import { connect } from "react-redux";
 import { getTasks } from "../../store/actions";
 
-class ToDo extends Component {
+class ToDo extends PureComponent {
   state = {
-    tasks: [],
     checkedTasks: new Set(),
     showConfirm: false,
     showNewTaskModal: false,
@@ -19,46 +17,16 @@ class ToDo extends Component {
 
   componentDidMount() {
     this.props.getTasks();
-    // fetch("http://localhost:3001/task", {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-TYpe": "application/json",
-    //   },
-    // })
-    //   .then((response) => response.json())
-    //   .then((tasks) => {
-    //     if (tasks.error) {
-    //       throw tasks.error;
-    //     }
-    //     this.setState({
-    //       tasks,
-    //     });
-    //   })
-    //   .catch((err) => console.log("err", err));
   }
 
-  handleAddTaskClick = (data) => {
-    fetch("http://localhost:3001/task", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((task) => {
-        if (task.error) {
-          throw task.error;
-        }
-        this.setState({
-          tasks: [task, ...this.state.tasks],
-          showNewTaskModal: false,
-        });
-      })
-      .catch((err) => console.log("err", err));
-  };
+  componentDidUpdate(prevProps) {
+    if (!prevProps.addTaskSuccess && this.props.addTaskSuccess) {
+      this.setState({
+        showNewTaskModal: false,
+      });
+    }
+  }
 
-  //optimization handledelatetask
   handleDeleteTask = (taskId) => () => {
     fetch(`http://localhost:3001/task/${taskId}`, {
       method: "DELETE",
@@ -180,7 +148,7 @@ class ToDo extends Component {
       showNewTaskModal,
     } = this.state;
 
-    const { tasks, showSpinner } = this.props;
+    const { tasks } = this.props;
     const showTask = tasks.map((task) => {
       return (
         <Col key={task._id} xs={12} sm={6} md={4} lg={3} xl={2}>
@@ -195,57 +163,46 @@ class ToDo extends Component {
       );
     });
     return (
-      <>
-        {showSpinner ? (
-          <Spinner />
-        ) : (
-          <Container fluid>
-            <Row>
-              <Col md={{ span: 6, offset: 3 }} className="text-center">
-                <Button
-                  className="m-3"
-                  variant="primary"
-                  disabled={checkedTasks.size}
-                  onClick={this.toggleNewTaskModal}
-                >
-                  Add new task
-                </Button>
-              </Col>
-            </Row>
-            <Row>{showTask}</Row>
-            <Row className="justify-content-center">
+        <Container fluid>
+          <Row>
+            <Col md={{ span: 6, offset: 3 }} className="text-center">
               <Button
-                variant="danger"
-                disabled={!checkedTasks.size}
-                onClick={this.toggleConfirm}
+                className="m-3"
+                variant="primary"
+                disabled={checkedTasks.size}
+                onClick={this.toggleNewTaskModal}
               >
-                Remove selected
+                Add new task
               </Button>
-            </Row>
-            {showConfirm && (
-              <Confirm
-                count={checkedTasks.size}
-                onSubmit={this.onRemoveSelected}
-                onCancel={this.toggleConfirm}
-              />
-            )}
-            {!!editTask && (
-              <EditTaskModal
-                value={editTask}
-                data={editTask}
-                onSave={this.handleSave}
-                onCancel={this.handleEdit(null)}
-              />
-            )}
-            {showNewTaskModal && (
-              <NewTask
-                onAdd={this.handleAddTaskClick}
-                onCancel={this.toggleNewTaskModal}
-              />
-            )}
-          </Container>
-        )}
-      </>
+            </Col>
+          </Row>
+          <Row>{showTask}</Row>
+          <Row className="justify-content-center">
+            <Button
+              variant="danger"
+              disabled={!checkedTasks.size}
+              onClick={this.toggleConfirm}
+            >
+              Remove selected
+            </Button>
+          </Row>
+          {showConfirm && (
+            <Confirm
+              count={checkedTasks.size}
+              onSubmit={this.onRemoveSelected}
+              onCancel={this.toggleConfirm}
+            />
+          )}
+          {!!editTask && (
+            <EditTaskModal
+              value={editTask}
+              data={editTask}
+              onSave={this.handleSave}
+              onCancel={this.handleEdit(null)}
+            />
+          )}
+          {showNewTaskModal && <NewTask onCancel={this.toggleNewTaskModal} />}
+        </Container>
     );
   }
 }
@@ -253,17 +210,9 @@ class ToDo extends Component {
 const mapStateToProps = (state) => {
   return {
     tasks: state.tasks,
-    showSpinner: state.loading,
+    addTaskSuccess: state.addTaskSuccess,
   };
 };
-
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     changeCount: (value) => {
-//       dispatch({ type: "ADD_COUNT", value });
-//     },
-//   };
-// };
 
 const mapDispatchToProps = {
   getTasks: getTasks,
