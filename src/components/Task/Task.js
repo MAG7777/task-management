@@ -1,9 +1,12 @@
 import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
 import { Card, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import styles from "./task.module.css";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { removeTask } from "../../store/actions";
 
 class Task extends PureComponent {
   state = {
@@ -24,7 +27,7 @@ class Task extends PureComponent {
   };
 
   render() {
-    const { data, onRemove, onEdit, disabled } = this.props;
+    const { data, removeTask, onEdit, disabled } = this.props;
     const { checked } = this.state;
 
     return (
@@ -73,7 +76,7 @@ class Task extends PureComponent {
           >
             <Button
               variant="danger"
-              onClick={onRemove(data._id)}
+              onClick={()=>removeTask(data._id)}
               className="m-1"
               disabled={disabled}
             >
@@ -86,4 +89,15 @@ class Task extends PureComponent {
   }
 }
 
-export default Task;
+Task.propTypes = {
+  data:PropTypes.object.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onEdit:PropTypes.func.isRequired,
+  disabled: PropTypes.bool
+};
+
+const mapDispatchToProps = {
+   removeTask
+};
+
+export default connect(null,mapDispatchToProps)(Task) ;

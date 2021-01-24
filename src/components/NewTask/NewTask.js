@@ -131,7 +131,6 @@ import {addTask} from "../../store/actions";
 }
 
 NewTask.propTypes = {
-  addTask: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };
 

@@ -5,16 +5,22 @@ const defaultState = {
   loading: false,
   error: null,
   addTaskSuccess: false,
-  successMessage:null
+  successMessage: null,
+  removeTasksSuccess: false,
+  editTaskSuccess: false
 };
 
 export const mainReducer = (state = defaultState, action) => {
+  const loadingState = {
+    ...state,
+    loading: true,
+    successMessage: null,
+    error: null,
+  };
+
   switch (action.type) {
     case actionTypes.LOADING:
-      return {
-        ...state,
-        loading: true,
-      };
+      return loadingState;
 
     case actionTypes.ERROR:
       return {
@@ -30,13 +36,10 @@ export const mainReducer = (state = defaultState, action) => {
         tasks: action.tasks,
       };
 
-    case actionTypes.ADDING_TASK_SUCCSESS:
+    case actionTypes.ADDING_TASK_SUCCESS:
       return {
-        ...state,
-        loading: true,
+        ...loadingState,
         addTaskSuccess: false,
-        successMessage:null,
-        error:null
       };
 
     case actionTypes.ADD_TASK_SUCCESS:
@@ -45,10 +48,17 @@ export const mainReducer = (state = defaultState, action) => {
         loading: false,
         tasks: [...state.tasks, action.task],
         addTaskSuccess: true,
-        successMessage:"Task added successfuly!!!"
+        successMessage: "Task added successfuly!!!",
       };
 
     // Edit task
+
+    case actionTypes.EDITING_TASK_SUCCESS:
+      return {
+        ...loadingState,
+        editTaskSuccess: false,
+      };
+
     case actionTypes.EDIT_TASK_SUCCESS:
       const tasks = [...state.tasks];
       const foundIndex = tasks.findIndex(
@@ -59,7 +69,39 @@ export const mainReducer = (state = defaultState, action) => {
         ...state,
         loading: false,
         tasks: tasks,
+        editTaskSuccess: true,
+        successMessage: "Task edited successfuly!!!",
       };
+
+    case actionTypes.REMOVING_TASK:
+      return { ...loadingState, removeTaskSuccess: false };
+
+    case actionTypes.REMOVE_TASK_SUCCESS:
+      const newTasks = state.tasks.filter((task) => task._id !== action.taskId);
+      return {
+        ...state,
+        loading: false,
+        tasks: newTasks,
+        successMessage: "Task removed successfuly!!!",
+      };
+
+    case actionTypes.REMOVING_MULTIPLE_TASKS:
+      return { ...loadingState, removeTasksSuccess: false };
+
+    case actionTypes.REMOVE_MULTIPLE_TASKS_SUCCESS: {
+      let tasks = [...state.tasks];
+
+      action.taskIds.forEach((taskId) => {
+        tasks = tasks.filter((task) => task._id !== taskId);
+      });
+      return {
+        ...state,
+        loading: false,
+        tasks: tasks,
+        removeTasksSuccess: true,
+        successMessage: "Tasks removed successfuly!!!",
+      };
+    }
 
     default:
       return state;
