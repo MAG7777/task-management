@@ -1,11 +1,27 @@
 import request from "../helpers/request";
 import * as actionTypes from "./actionTypes";
 
+const apiURL = process.env.REACT_APP_API_URL;
+
+export function getSingleTask(taskId) {
+  return (dispatch) => {
+    dispatch({ type: actionTypes.LOADING });
+
+    request(`${apiURL}/task/${taskId}`)
+      .then((task) => {
+        dispatch({ type: actionTypes.GET_SINGLE_TASK_SUCCESS, task });
+      })
+      .catch((err) => {
+        dispatch({ type: actionTypes.ERROR, error: err.message });
+      });
+  };
+}
+
 export function getTasks() {
   return (dispatch) => {
     dispatch({ type: actionTypes.LOADING });
 
-    request("http://localhost:3001/task")
+    request(`${apiURL}/task`)
       .then((tasks) => {
         dispatch({ type: actionTypes.GET_TASKS_SUCCESS, tasks });
       })
@@ -15,13 +31,13 @@ export function getTasks() {
   };
 }
 
-export function editTask(taskId, data) {
+export function editTask(taskId, data, from = "tasks") {
   return (dispatch) => {
     dispatch({ type: actionTypes.EDITING_TASK_SUCCESS });
 
-    request(`http://localhost:3001/task/${taskId}`, "PUT", data)
+    request(`${apiURL}/task/${taskId}`, "PUT", data)
       .then((editedTask) => {
-        dispatch({ type: actionTypes.EDIT_TASK_SUCCESS, editedTask });
+        dispatch({ type: actionTypes.EDIT_TASK_SUCCESS, editedTask, from });
       })
       .catch((err) => {
         dispatch({ type: actionTypes.ERROR, error: err.message });
@@ -30,43 +46,46 @@ export function editTask(taskId, data) {
 }
 
 export function addTask(data) {
-    return (dispatch) => {
-      dispatch({ type: actionTypes.ADDING_TASK_SUCCESS });
-  
-      request("http://localhost:3001/task", "POST", data)
-        .then((task) => {
-          dispatch({ type: actionTypes.ADD_TASK_SUCCESS, task });
-        })
-        .catch((err) => {
-          dispatch({ type: actionTypes.ERROR, error: err.message });
-        });
-    };
-  }
+  return (dispatch) => {
+    dispatch({ type: actionTypes.ADDING_TASK_SUCCESS });
 
-  export function removeTask(taskId) {
-    return (dispatch) => {
-      dispatch({ type: actionTypes.REMOVING_TASK });
-  
-      request(`http://localhost:3001/task/${taskId}`, 'DELETE')
-        .then(() => {
-          dispatch({ type: actionTypes.REMOVE_TASK_SUCCESS,taskId});
-        })
-        .catch((err) => {
-          dispatch({ type: actionTypes.ERROR, error: err.message });
-        });
-    };
-  }
+    request(`${apiURL}/task`, "POST", data)
+      .then((task) => {
+        dispatch({ type: actionTypes.ADD_TASK_SUCCESS, task });
+      })
+      .catch((err) => {
+        dispatch({ type: actionTypes.ERROR, error: err.message });
+      });
+  };
+}
 
-  export function removeMultipleTasks(data) {
-    return (dispatch) => {
-      dispatch({ type: actionTypes.REMOVING_MULTIPLE_TASKS });
-  
-      request('http://localhost:3001/task/', 'PATCH',data )
-        .then(() => {
-          dispatch({ type: actionTypes.REMOVE_MULTIPLE_TASKS_SUCCESS, taskIds:data.tasks});
-        })
-        .catch((err) => {
-          dispatch({ type: actionTypes.ERROR, error: err.message });
+export function removeTask(taskId, from = "tasks") {
+  return (dispatch) => {
+    dispatch({ type: actionTypes.REMOVING_TASK });
+
+    request(`${apiURL}/task/${taskId}`, "DELETE")
+      .then(() => {
+        dispatch({ type: actionTypes.REMOVE_TASK_SUCCESS, taskId, from });
+      })
+      .catch((err) => {
+        dispatch({ type: actionTypes.ERROR, error: err.message });
+      });
+  };
+}
+
+export function removeMultipleTasks(data) {
+  return (dispatch) => {
+    dispatch({ type: actionTypes.REMOVING_MULTIPLE_TASKS });
+
+    request(`${apiURL}/task/`, "PATCH", data)
+      .then(() => {
+        dispatch({
+          type: actionTypes.REMOVE_MULTIPLE_TASKS_SUCCESS,
+          taskIds: data.tasks,
         });
-    };
-  }
+      })
+      .catch((err) => {
+        dispatch({ type: actionTypes.ERROR, error: err.message });
+      });
+  };
+}

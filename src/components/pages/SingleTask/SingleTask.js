@@ -1,82 +1,43 @@
 import React, { Component } from "react";
-import Spinner from "../../Spinner/Spinner";
 import EditTaskModal from "../../EditTaskModal";
 import { Button, OverlayTrigger, Tooltip, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import styles from "./singleTask.module.css";
+import { getSingleTask, removeTask } from "../../../store/actions";
+import { connect } from "react-redux";
+import {formatDate } from "../../../helpers/utils";
 
-export default class SingleTask extends Component {
+class SingleTask extends Component {
   state = {
-    task: null,
     isEdit: false,
   };
   componentDidMount() {
     const taskId = this.props.match.params.id;
-    fetch(`http://localhost:3001/task/${taskId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((task) => {
-        if (task.error) {
-          throw task.error;
-        }
-        this.setState({
-          task,
-        });
-      })
-      .catch((err) => console.log("err", err));
+    this.props.getSingleTask(taskId);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.removeTaskSuccess && this.props.removeTaskSuccess) {
+      this.props.history.push("/");
+    }
+    if (!prevProps.editTaskSuccess && this.props.editTaskSuccess) {
+      this.toggleEditModal();
+    }
   }
 
   handleRemove = () => {
-    const taskId = this.state.task._id;
-    fetch(`http://localhost:3001/task/${taskId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          throw data.error;
-        }
-        this.props.history.push("/");
-      })
-      .catch((err) => console.log("err", err));
+    const taskId = this.props.task._id;
+    this.props.removeTask(taskId, "single");
   };
 
   toggleEditModal = () => {
     this.setState({ isEdit: !this.state.isEdit });
   };
 
-  handleSave = (taskId, data) => {
-    fetch(`http://localhost:3001/task/${taskId}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          throw data.error;
-        }
-
-        this.setState({
-          task: data,
-          isEdit: false,
-        });
-      })
-      .catch((err) => console.log("err", err));
-  };
-
   render() {
-    const { task, isEdit } = this.state;
+    const { isEdit } = this.state;
+    const { task } = this.props;
     return (
       <>
         {task ? (
@@ -86,7 +47,8 @@ export default class SingleTask extends Component {
                 <Card.Header as="h5">Title:{task.title}</Card.Header>
                 <Card.Body>
                   <Card.Title>Description:{task.description}</Card.Title>
-                  <Card.Text>Date: {task.date.slice(0, 10)}</Card.Text>
+                  <Card.Text>Date: { formatDate(task.date)}</Card.Text>
+                  <Card.Text>Created: {formatDate(task.created_at)}</Card.Text>
                   <OverlayTrigger
                     placement="top"
                     overlay={
@@ -127,15 +89,29 @@ export default class SingleTask extends Component {
             {isEdit && (
               <EditTaskModal
                 data={task}
-                onSave={this.handleSave}
                 onCancel={this.toggleEditModal}
+                from="single"
               />
             )}
           </div>
         ) : (
-          <Spinner />
+          <div>Task not found</div>
         )}
       </>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    task: state.task,
+    removeTaskSuccess: state.removeTaskSuccess,
+    editTaskSuccess: state.editTaskSuccess,
+  };
+};
+const mapDispatchToProps = {
+  getSingleTask,
+  removeTask,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SingleTask);

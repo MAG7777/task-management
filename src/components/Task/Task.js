@@ -7,6 +7,7 @@ import styles from "./task.module.css";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { removeTask } from "../../store/actions";
+import { formatDate, cutString } from "../../helpers/utils";
 
 class Task extends PureComponent {
   state = {
@@ -43,11 +44,9 @@ class Task extends PureComponent {
           <Link to={`/task/${data._id}`}>
             <Card.Title>Title: {data.title}</Card.Title>
           </Link>
-          <Card.Text>Description: {data.description}</Card.Text>
-          <Card.Text>
-            Date: {data.date ? data.date.slice(0, 10) : "none"}
-          </Card.Text>
-
+          <Card.Text>Description: {cutString(data.description, 20)}</Card.Text>
+          <Card.Text>Date: {formatDate(data.date)}</Card.Text>
+          <Card.Text>Created: {formatDate(data.created_at)}</Card.Text>
           <OverlayTrigger
             placement="top"
             overlay={
@@ -76,7 +75,7 @@ class Task extends PureComponent {
           >
             <Button
               variant="danger"
-              onClick={()=>removeTask(data._id)}
+              onClick={() => removeTask(data._id)}
               className="m-1"
               disabled={disabled}
             >
@@ -90,14 +89,14 @@ class Task extends PureComponent {
 }
 
 Task.propTypes = {
-  data:PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired,
   onCheck: PropTypes.func.isRequired,
-  onEdit:PropTypes.func.isRequired,
-  disabled: PropTypes.bool
+  onEdit: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 };
 
 const mapDispatchToProps = {
-   removeTask
+  removeTask,
 };
 
-export default connect(null,mapDispatchToProps)(Task) ;
+export default connect(null, mapDispatchToProps)(Task);
