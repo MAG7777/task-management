@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, createRef } from "react";
 import { FormControl, Button, Modal, Form } from "react-bootstrap";
 import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
@@ -16,11 +16,17 @@ class EditTaskModal extends PureComponent {
       valid: true,
       validationType: null,
     };
+
+     this.inputTitleFocus = createRef();
   }
   valitadionErrors = {
     requiredError: "The field is required!",
     lengthError: "The Title length should be less than 50 characters",
   };
+
+  componentDidMount(){
+    this.inputTitleFocus.current.focus();
+  }
 
   handleChange = (type, value) => {
     if (type === "title" && !this.state.valid) {
@@ -100,6 +106,7 @@ class EditTaskModal extends PureComponent {
               placeholder="Title"
               aria-label="Title"
               aria-describedby="basic-addon2"
+              ref={this.inputTitleFocus}
             />
           </Form.Group>
           <Form.Control

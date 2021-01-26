@@ -1,25 +1,34 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, createRef } from "react";
 import { FormControl, Button, Modal, Form } from "react-bootstrap";
 import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "./newTask.module.css";
 import { connect } from "react-redux";
-import {addTask} from "../../store/actions";
+import { addTask } from "../../store/actions";
 
- class NewTask extends PureComponent {
-  state = {
-    title: "",
-    description: "",
-    date: new Date(),
-    valid: true,
-    validationType: null,
-  };
+class NewTask extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: "",
+      description: "",
+      date: new Date(),
+      valid: true,
+      validationType: null,
+    };
+
+    this.titleInputRef = createRef()
+  }
 
   valitadionErrors = {
     requiredError: "The field is required!",
     lengthError: "The Title length should be less than 50 characters",
   };
+
+  componentDidMount(){
+    this.titleInputRef.current.focus()
+  }
 
   handleChange = (type, value) => {
     if (type === "title" && !this.state.valid) {
@@ -98,6 +107,7 @@ import {addTask} from "../../store/actions";
               placeholder="Title"
               aria-label="Title"
               aria-describedby="basic-addon2"
+              ref={this.titleInputRef}
             />
           </Form.Group>
           <Form.Control
@@ -135,7 +145,7 @@ NewTask.propTypes = {
 };
 
 const mapDispatchToProps = {
-  addTask: addTask
-}
+  addTask: addTask,
+};
 
-export default connect(null,mapDispatchToProps)(NewTask);
+export default connect(null, mapDispatchToProps)(NewTask);
