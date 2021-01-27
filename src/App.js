@@ -1,25 +1,64 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { PureComponent } from "react";
+import "./public/css/style.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
+import ToDo from "./components/pages/ToDo";
+import SingleTask from "./components/pages/SingleTask/SingleTask";
+import NotFound from "./components/pages/NotFound";
+import Spinner from "./components/Spinner/Spinner";
+import { Switch, Route, Redirect } from "react-router-dom";
+import NavBarMenu from "./components/NavBarMenu";
+import { ToastContainer, toast } from "react-toastify";
+import { connect } from "react-redux";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends PureComponent {
+  componentDidUpdate() {
+    const { errorMessage, successMessage } = this.props;
+    if (errorMessage) {
+      toast.error(errorMessage);
+    }
+    if (successMessage) {
+      toast.success(successMessage);
+    }
+  }
+
+  render() {
+    const { showSpinner } = this.props;
+    return (
+      <>
+        <div className="app">
+          <NavBarMenu />
+          <Switch>
+            <Route exact path="/" component={ToDo} />
+            <Route exact path="/task/:id" component={SingleTask} />
+            <Route exact path="/not-found" component={NotFound} />
+            <Redirect to="/not-found" />
+          </Switch>
+
+          <ToastContainer
+            position="bottom-left"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
+        </div>
+        {showSpinner && <Spinner />}
+      </>
+    );
+  }
 }
 
-export default App;
+const mapeStateToProps = (state) => {
+  return {
+    errorMessage: state.error,
+    successMessage: state.successMessage,
+    showSpinner: state.loading,
+  };
+};
+
+export default connect(mapeStateToProps)(App);

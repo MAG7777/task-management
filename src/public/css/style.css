@@ -1,0 +1,19 @@
+* {
+  margin: o;
+  padding: 0;
+}
+
+.app {
+  /* padding: 10px;
+    background-color: silver; */
+}
+
+.activeMenu {
+  color: white;
+  font-weight: bold;
+}
+
+.logo {
+  border-radius: 50%;
+  height: 40px;
+}
