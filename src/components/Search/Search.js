@@ -41,10 +41,6 @@ const sortOption = [
     value: "z-a",
   },
   {
-    label: "Z-A",
-    value: "z-a",
-  },
-  {
     label: "Creation date oldest",
     value: "creation_date_oldest",
   },

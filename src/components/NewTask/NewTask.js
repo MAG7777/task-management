@@ -18,7 +18,7 @@ class NewTask extends PureComponent {
       validationType: null,
     };
 
-    this.titleInputRef = createRef()
+    this.titleInputRef = createRef();
   }
 
   valitadionErrors = {
@@ -26,8 +26,8 @@ class NewTask extends PureComponent {
     lengthError: "The Title length should be less than 50 characters",
   };
 
-  componentDidMount(){
-    this.titleInputRef.current.focus()
+  componentDidMount() {
+    this.titleInputRef.current.focus();
   }
 
   handleChange = (type, value) => {
@@ -67,6 +67,7 @@ class NewTask extends PureComponent {
       });
       return;
     }
+    date = date || new Date();
     const data = {
       title,
       description,

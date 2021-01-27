@@ -2,11 +2,16 @@ import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { Card, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faEdit,
+  faCheck,
+  faHistory,
+} from "@fortawesome/free-solid-svg-icons";
 import styles from "./task.module.css";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { removeTask } from "../../store/actions";
+import { removeTask, changeTaskStatus } from "../../store/actions";
 import { formatDate, cutString } from "../../helpers/utils";
 
 class Task extends PureComponent {
@@ -28,12 +33,14 @@ class Task extends PureComponent {
   };
 
   render() {
-    const { data, removeTask, onEdit, disabled } = this.props;
+    const { data, removeTask, onEdit, disabled, changeTaskStatus } = this.props;
     const { checked } = this.state;
 
     return (
       <Card
-        className={`card ${styles.taskcard} ${checked ? styles.checked : ""}`}
+        className={`card ${styles.taskcard} ${checked ? styles.checked : ""} ${
+          data.status === "active" ? styles.activeTask : styles.pasiceTask
+        }`}
       >
         <input
           type="checkbox"
@@ -47,6 +54,44 @@ class Task extends PureComponent {
           <Card.Text>Description: {cutString(data.description, 20)}</Card.Text>
           <Card.Text>Date: {formatDate(data.date)}</Card.Text>
           <Card.Text>Created: {formatDate(data.created_at)}</Card.Text>
+          <Card.Text>Status: {formatDate(data.status)}</Card.Text>
+          {data.status === "active" ? (
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip>
+                  <strong>Mark as done</strong>.
+                </Tooltip>
+              }
+            >
+              <Button
+                variant="success"
+                onClick={() => changeTaskStatus(data._id, { status: "done" })}
+                className="m-1"
+                disabled={disabled}
+              >
+                <FontAwesomeIcon icon={faCheck} />
+              </Button>
+            </OverlayTrigger>
+          ) : (
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip>
+                  <strong>Mark as active</strong>.
+                </Tooltip>
+              }
+            >
+              <Button
+                variant="warning"
+                onClick={() => changeTaskStatus(data._id, { status: "active" })}
+                className="m-1"
+                disabled={disabled}
+              >
+                <FontAwesomeIcon icon={faHistory} />
+              </Button>
+            </OverlayTrigger>
+          )}
           <OverlayTrigger
             placement="top"
             overlay={
@@ -97,6 +142,7 @@ Task.propTypes = {
 
 const mapDispatchToProps = {
   removeTask,
+  changeTaskStatus,
 };
 
 export default connect(null, mapDispatchToProps)(Task);

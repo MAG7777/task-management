@@ -7,6 +7,14 @@
   /* width: 18rem; */
 }
 
+.activeTask {
+  border: 2px solid #24ca15;
+}
+
+.pasiceTask{
+  border: 2px solid #434547;
+}
+
 .checked {
-    border: 1px solid red;
+  border: 2px solid red;
 }
