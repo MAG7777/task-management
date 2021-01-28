@@ -57,6 +57,8 @@ export function editTask(taskId, data, from = "tasks") {
 }
 
 export function addTask(data) {
+  console.log("DATA==============>>>>>", data);
+  console.log("URL==============>>>>>", apiURL);
   return (dispatch) => {
     dispatch({ type: actionTypes.ADDING_TASK_SUCCESS });
 
