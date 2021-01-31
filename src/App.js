@@ -7,6 +7,7 @@ import SingleTask from "./components/pages/SingleTask/SingleTask";
 import NotFound from "./components/pages/NotFound";
 import Spinner from "./components/Spinner/Spinner";
 import Register from "./components/pages/Resgister/Register";
+import Login from "./components/pages/Login/Login";
 import { Switch, Route, Redirect } from "react-router-dom";
 import NavBarMenu from "./components/NavBarMenu";
 import { ToastContainer, toast } from "react-toastify";
@@ -14,17 +15,23 @@ import { connect } from "react-redux";
 
 class App extends PureComponent {
   componentDidUpdate() {
-    const { errorMessage, successMessage } = this.props;
+    const { errorMessage, successMessage, authErrorMessage, authSuccessMessage } = this.props;
     if (errorMessage) {
       toast.error(errorMessage);
     }
     if (successMessage) {
       toast.success(successMessage);
     }
+    if (authErrorMessage) {
+      toast.error(authErrorMessage);
+    }
+    if (authSuccessMessage) {
+      toast.success(authSuccessMessage);
+    }
   }
 
   render() {
-    const { showSpinner } = this.props;
+    const { showSpinner, showAuthSpiner } = this.props;
     return (
       <>
         <div className="app">
@@ -33,6 +40,7 @@ class App extends PureComponent {
             <Route exact path="/" component={ToDo} />
             <Route exact path="/task/:id" component={SingleTask} />
             <Route exact path="/register" component={Register} />
+            <Route exact path="/login" component={Login} />
             <Route exact path="/not-found" component={NotFound} />
             <Redirect to="/not-found" />
           </Switch>
@@ -49,7 +57,7 @@ class App extends PureComponent {
             pauseOnHover
           />
         </div>
-        {showSpinner && <Spinner />}
+        {(showSpinner || showAuthSpiner) && <Spinner />}
       </>
     );
   }
@@ -57,9 +65,13 @@ class App extends PureComponent {
 
 const mapeStateToProps = (state) => {
   return {
-    errorMessage: state.error,
-    successMessage: state.successMessage,
-    showSpinner: state.loading,
+    errorMessage: state.taskReducer.error,
+    successMessage: state.taskReducer.successMessage,
+    showSpinner: state.taskReducer.loading,
+
+    showAuthSpiner: state.authReducer.loading,
+    authErrorMessage: state.authReducer.error,
+    authSuccessMessage: state.authReducer.successMessage,
   };
 };
 

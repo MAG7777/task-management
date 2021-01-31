@@ -1,37 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import styles from "./register.module.css"
+import { connect } from "react-redux";
+import { register } from "../../../store/userAction";
 
 
-function Register() {
+function Register(props) {
     const [values, setValues] = useState({
+        name: "",
+        surname: "",
         email: "",
         password: "",
         confirmPassword: ""
     });
 
     const [errors, setErrors] = useState({
+        name: null,
+        surname: null,
         email: null,
         password: null,
         confirmPassword: null
     });
 
     const handleSubmit = () => {
-        const { email, password, confirmPassword } = values;
+        const { email, password, confirmPassword, name, surname } = values;
+        let valid = true;
         let passwordErrorMessage = null;
         if (!confirmPassword) {
             passwordErrorMessage = "Password is required";
+            valid = false;
         }
         else if (password !== confirmPassword) {
             passwordErrorMessage = "Passwords is not match";
+            valid = false;
         }
 
         setErrors({
             email: email ? null : "Email is required",
             confirmPassword: passwordErrorMessage,
             password: password ? null : "Password is required",
-            
+
         });
+        if (valid) {
+            props.register(values);
+        }
 
     }
     const handleChange = ({ target: { name, value } }) => {
@@ -47,6 +59,14 @@ function Register() {
 
     }
 
+    const { registerSuccess, history } = props;
+    useEffect(() => {
+        if (registerSuccess) {
+            console.log("hhhhhhhhh", props)
+            history.push("/login")
+        }
+    }, [registerSuccess]);
+
     return (
         <div className={styles.form}>
             <Container>
@@ -54,6 +74,26 @@ function Register() {
                     <Col xs={12} sm={8} md={6}>
                         <Form>
                             <h3 className={styles.formTitle}>Registration</h3>
+                            <Form.Group>
+                                <Form.Control
+                                    // className={errors.name ? styles.inValid : ""}
+                                    value={values.name}
+                                    onChange={handleChange}
+                                    type="text"
+                                    name="name"
+                                    placeholder="Enter your name"
+                                />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Control
+                                    // className={errors.surname ? styles.inValid : ""}
+                                    value={values.surname}
+                                    onChange={handleChange}
+                                    type="text"
+                                    name="surname"
+                                    placeholder="Enter your surname"
+                                />
+                            </Form.Group>
                             <Form.Group>
                                 <Form.Control
                                     className={errors.email ? styles.inValid : ""}
@@ -124,4 +164,14 @@ function Register() {
     );
 }
 
-export default Register;
+const mapeStateToProps = (state) => {
+    return {
+        registerSuccess: state.authReducer.registerSuccess
+    };
+};
+
+const mapDispatchToProps = {
+    register
+};
+
+export default connect(mapeStateToProps, mapDispatchToProps)(Register);
