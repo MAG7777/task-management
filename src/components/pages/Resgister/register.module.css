@@ -1,0 +1,24 @@
+.form {
+    height: calc(100vh - 55px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.formTitle {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.submitContainer {
+    text-align: center;
+}
+
+.inValid {
+    border: 1px solid red;
+}
+
+
+/* .submitContainer .button {
+    width: 80%;
+} */

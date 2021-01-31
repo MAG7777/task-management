@@ -6,6 +6,7 @@ import ToDo from "./components/pages/ToDo";
 import SingleTask from "./components/pages/SingleTask/SingleTask";
 import NotFound from "./components/pages/NotFound";
 import Spinner from "./components/Spinner/Spinner";
+import Register from "./components/pages/Resgister/Register";
 import { Switch, Route, Redirect } from "react-router-dom";
 import NavBarMenu from "./components/NavBarMenu";
 import { ToastContainer, toast } from "react-toastify";
@@ -31,6 +32,7 @@ class App extends PureComponent {
           <Switch>
             <Route exact path="/" component={ToDo} />
             <Route exact path="/task/:id" component={SingleTask} />
+            <Route exact path="/register" component={Register} />
             <Route exact path="/not-found" component={NotFound} />
             <Redirect to="/not-found" />
           </Switch>
