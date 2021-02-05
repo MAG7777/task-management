@@ -3,6 +3,7 @@ import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import styles from "./register.module.css"
 import { connect } from "react-redux";
 import { register } from "../../../store/userAction";
+import { Link } from "react-router-dom";
 
 
 function Register(props) {
@@ -62,7 +63,6 @@ function Register(props) {
     const { registerSuccess, history } = props;
     useEffect(() => {
         if (registerSuccess) {
-            console.log("hhhhhhhhh", props)
             history.push("/login")
         }
     }, [registerSuccess]);
@@ -155,7 +155,7 @@ function Register(props) {
                                     Register
                         </Button>
                             </div>
-
+                            <Link to='/login' >Already register? Try to login.</Link>
                         </Form>
                     </Col>
                 </Row>

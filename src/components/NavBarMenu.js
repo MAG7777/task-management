@@ -1,27 +1,71 @@
 import React from "react";
-import { Navbar, Nav } from "react-bootstrap";
+import { Navbar, Nav, Button } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import logo from "../public/images/logo.png";
+import { logout } from "./../store/userAction";
+import { connect } from "react-redux";
 
-export default function NavBarMenu() {
+function NavBarMenu({ isLogin, logout }) {
   return (
     <Navbar bg="dark" variant="dark">
       <Navbar.Brand>
-        <NavLink activeClassName="activeMenu" exact to="/">
+        <NavLink activeClassName="activeMenu" exact to={isLogin ? "/" : "/login"}>
           <img src={logo} alt="logo" className="logo" />
         </NavLink>
       </Navbar.Brand>
       <Nav className="mr-auto">
-        <Nav>
-          <NavLink activeClassName="activeMenu" exact to="/" style={{textDecoration:"none"}}>
-            Home
+        {
+          isLogin ?
+            <NavLink
+              activeClassName="activeMenu"
+              exact to="/"
+              style={{ textDecoration: "none" }}>
+              Home
+          </NavLink> :
+            <>
+              <NavLink
+                activeClassName="activeMenu"
+                exact
+                to="/register" >
+                Register
           </NavLink>
+              <NavLink
+                activeClassName="activeMenu"
+                exact
+                to="/login" >
+                Login
+              </NavLink>
+            </>
+        }
 
-          <NavLink activeClassName="activeMenu" exact to="/task">
-            Task
+
+        <NavLink activeClassName="activeMenu" exact to="/contact">
+          Contact
           </NavLink>
-        </Nav>
+        <NavLink activeClassName="activeMenu" exact to="/about">
+          About
+          </NavLink>
       </Nav>
+      {
+        isLogin &&
+        <Button
+          onClick={logout}
+          variant="success">
+          Logout
+        </Button>
+      }
     </Navbar>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    isLogin: state.authReducer.isLogin
+  };
+};
+
+const mapDispatchToProps = {
+  logout
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavBarMenu);
