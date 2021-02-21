@@ -10,6 +10,7 @@ import Register from "./components/pages/Resgister/Register";
 import Login from "./components/pages/Login/Login";
 import { Switch, Route, Redirect } from "react-router-dom";
 import NavBarMenu from "./components/NavBarMenu";
+import CustomRoute from "./components/Router/CustomRoute";
 import { ToastContainer, toast } from "react-toastify";
 import { connect } from "react-redux";
 
@@ -37,10 +38,12 @@ class App extends PureComponent {
         <div className="app">
           <NavBarMenu />
           <Switch>
-            <Route exact path="/" component={ToDo} />
-            <Route exact path="/task/:id" component={SingleTask} />
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/login" component={Login} />
+            <CustomRoute type="private" exact path="/" component={ToDo} />
+            <CustomRoute type="private" exact path="/task/:id" component={SingleTask} />
+            <CustomRoute exact  path="/register" component={Register} />
+            <CustomRoute exact  path="/login" component={Login} />
+            {/* <Route exact path="/about" component={About} />
+            <Route exact path="/contact" component={Contact} /> */}
             <Route exact path="/not-found" component={NotFound} />
             <Redirect to="/not-found" />
           </Switch>

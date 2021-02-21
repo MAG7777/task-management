@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import styles from "./register.module.css"
 import { connect } from "react-redux";
@@ -60,12 +60,12 @@ function Register(props) {
 
     }
 
-    const { registerSuccess, history } = props;
-    useEffect(() => {
-        if (registerSuccess) {
-            history.push("/login")
-        }
-    }, [registerSuccess]);
+    // const { registerSuccess, history } = props;
+    // useEffect(() => {
+    //     if (registerSuccess) {
+    //         history.push("/login")
+    //     }
+    // }, [registerSuccess, history]);
 
     return (
         <div className={styles.form}>
@@ -164,14 +164,9 @@ function Register(props) {
     );
 }
 
-const mapeStateToProps = (state) => {
-    return {
-        registerSuccess: state.authReducer.registerSuccess
-    };
-};
 
 const mapDispatchToProps = {
     register
 };
 
-export default connect(mapeStateToProps, mapDispatchToProps)(Register);
+export default connect(null, mapDispatchToProps)(Register);

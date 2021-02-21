@@ -1,4 +1,5 @@
 import * as actionTypes from "./actionTypes";
+import { LOGOUT_SUCCESS } from "./userActionTypes";
 
 const defaultState = {
   tasks: [],
@@ -21,6 +22,10 @@ export const taskReducer = (state = defaultState, action) => {
   };
 
   switch (action.type) {
+
+    case LOGOUT_SUCCESS:
+      return defaultState;
+
     case actionTypes.LOADING:
       return loadingState;
 
