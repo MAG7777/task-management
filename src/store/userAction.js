@@ -1,6 +1,6 @@
 import request from "../helpers/request";
 import * as actionTypes from "./userActionTypes";
-import { saveJWT, removeJWT, getJWT } from "../helpers/auth";
+import { saveJWT, removeJWT, getLocalJWT } from "../helpers/auth";
 import { history } from "./../helpers/history";
 import { loginRequest, registerRequest } from "../helpers/auth";
 
@@ -42,17 +42,25 @@ export function login(data) {
 export function logout() {
     let url = `${apiURL}/user/sign-out`;
 
-    return (dispatch) => {
+    return async (dispatch) => {
         dispatch({ type: actionTypes.AUTH_LOADING });
-        request(url, "POST", { jwt: getJWT() })
-            .then(() => {
-                removeJWT();
-                dispatch({ type: actionTypes.LOGOUT_SUCCESS });
-                history.push('/login')
-            })
-            .catch((err) => {
-                dispatch({ type: actionTypes.AUTH_ERROR, error: err.message });
-            });
+        const jwt = getLocalJWT();
+        if (jwt) {
+            request(url, "POST", { jwt })
+                .then(() => {
+                    removeJWT();
+                    dispatch({ type: actionTypes.LOGOUT_SUCCESS });
+                    history.push('/login')
+                })
+                .catch((err) => {
+                    dispatch({ type: actionTypes.AUTH_ERROR, error: err.message });
+                });
+        }
+        else {
+            dispatch({ type: actionTypes.LOGOUT_SUCCESS });
+            history.push('/login')
+        }
+
     };
 }
 
